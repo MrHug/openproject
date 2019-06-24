@@ -48,7 +48,7 @@ describe Redmine::MenuManager::MenuHelper, type: :helper do
 
   it 'should render single menu node' do
     node = Redmine::MenuManager::MenuItem.new(:testing, '/test', {})
-    @response.body = render_single_menu_node(node, 'This is a test', node.url, false)
+    @response.body = render_single_menu_node(node)#, 'This is a test', node.url, false)
 
     html_node = Nokogiri::HTML(@response.body)
     assert_select(html_node.root, 'a.testing-menu-item', 'This is a test')
