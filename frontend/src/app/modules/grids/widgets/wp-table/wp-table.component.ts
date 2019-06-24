@@ -11,6 +11,7 @@ import {QueryFormDmService} from "core-app/modules/hal/dm-services/query-form-dm
 import {QueryDmService} from "core-app/modules/hal/dm-services/query-dm.service";
 import {QueryFormResource} from "core-app/modules/hal/resources/query-form-resource";
 import {Observable} from "rxjs";
+import {StateService} from '@uirouter/core';
 
 @Component({
   templateUrl: './wp-table.component.html',
@@ -32,6 +33,7 @@ export class WidgetWpTableComponent extends WidgetWpListComponent implements OnI
 
   constructor(protected i18n:I18nService,
               protected urlParamsHelper:UrlParamsHelperService,
+              private readonly state:StateService,
               private readonly queryDm:QueryDmService,
               private readonly queryFormDm:QueryFormDmService) {
     super(i18n);
@@ -111,11 +113,13 @@ export class WidgetWpTableComponent extends WidgetWpListComponent implements OnI
   }
 
   private createInitial():Promise<QueryResource> {
+    const projectIdentifier = this.state.params['projectPath'];
+
     return this.queryFormDm
       .loadWithParams(
         {pageSize: 0},
         undefined,
-        null,
+        projectIdentifier,
         this.buildQueryRequest()
       )
       .then(form => {

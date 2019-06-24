@@ -53,6 +53,7 @@ import {WidgetWpAccountableComponent} from './widgets/wp-accountable/wp-accounta
 import {WidgetWpTableComponent} from "core-app/modules/grids/widgets/wp-table/wp-table.component";
 import {WidgetMenuComponent} from "core-app/modules/grids/widgets/menu/widget-menu.component";
 import {WidgetWpTableMenuComponent} from "core-app/modules/grids/widgets/wp-table/wp-table-menu.component";
+import {GridInitializationService} from "core-app/modules/grids/grid/initialization.service";
 
 export const GRID_ROUTES:Ng2StateDeclaration[] = [
   {
@@ -98,6 +99,7 @@ export const GRID_ROUTES:Ng2StateDeclaration[] = [
       multi: true
     },
     GridWidgetsService,
+    GridInitializationService,
   ],
   declarations: [
     GridComponent,
@@ -129,6 +131,7 @@ export const GRID_ROUTES:Ng2StateDeclaration[] = [
     MyPageComponent,
   ],
   exports: [
+    GridComponent
   ]
 })
 export class OpenprojectGridsModule {

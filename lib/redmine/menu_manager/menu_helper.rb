@@ -161,7 +161,7 @@ module Redmine::MenuManager::MenuHelper
     end
   end
 
-  def render_single_menu_node(item, project)
+  def render_single_menu_node(item, project = nil)
     caption, url, selected = extract_node_details(item, project)
 
     link_text = ''.html_safe

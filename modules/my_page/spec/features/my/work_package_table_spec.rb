@@ -28,6 +28,8 @@
 
 require 'spec_helper'
 
+require_relative '../../support/pages/my/page'
+
 describe 'Arbitrary WorkPackage query table widget on my page', type: :feature, js: true do
   let!(:type) { FactoryBot.create :type }
   let!(:other_type) { FactoryBot.create :type }

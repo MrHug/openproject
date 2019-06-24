@@ -86,6 +86,7 @@ import {MainMenuNavigationService} from "core-components/main-menu/main-menu-nav
 import {StatusCacheService} from "core-components/statuses/status-cache.service";
 import {VersionCacheService} from "core-components/versions/version-cache.service";
 import {FormsCacheService} from "core-components/forms/forms-cache.service";
+import {OpenprojectDashboardsModule} from "core-app/modules/dashboards/openproject-dashboards.module";
 
 @NgModule({
   imports: [
@@ -114,6 +115,9 @@ import {FormsCacheService} from "core-components/forms/forms-cache.service";
     // Calendar module
     OpenprojectCalendarModule,
     FullCalendarModule,
+
+    // Dashboards
+    OpenprojectDashboardsModule,
 
     // Global Search
     OpenprojectGlobalSearchModule,

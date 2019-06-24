@@ -28,6 +28,8 @@
 
 require 'spec_helper'
 
+require_relative '../../support/pages/my/page'
+
 describe 'Accountable widget on my page', type: :feature, js: true do
   let!(:type) { FactoryBot.create :type }
   let!(:priority) { FactoryBot.create :default_priority }

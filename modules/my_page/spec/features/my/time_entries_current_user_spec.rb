@@ -28,6 +28,8 @@
 
 require 'spec_helper'
 
+require_relative '../../support/pages/my/page'
+
 describe 'My page time entries current user widget spec', type: :feature, js: true do
   let!(:type) { FactoryBot.create :type }
   let!(:project) { FactoryBot.create :project, types: [type] }

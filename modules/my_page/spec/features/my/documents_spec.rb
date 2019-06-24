@@ -28,6 +28,8 @@
 
 require 'spec_helper'
 
+require_relative '../../support/pages/my/page'
+
 describe 'My page documents widget', type: :feature, js: true do
   let!(:project) { FactoryBot.create :project }
   let!(:other_project) { FactoryBot.create :project }

@@ -2,9 +2,6 @@
 # or not at all
 require 'open_project/plugins'
 
-#require 'redmine/menu_manager'
-#require 'open_project/access_control'
-
 module Dashboards
   class Engine < ::Rails::Engine
     isolate_namespace Dashboards
@@ -21,17 +18,22 @@ module Dashboards
                   after: :work_packages,
                   before: :calendar,
                   param: :project_id,
-                  engine: :dashboards,
+                  engine: :project_dashboards,
                   icon: 'icon2')
       end
     end
 
     initializer 'dashboards.menu' do
-      OpenProject::AccessControl.map do |map|
-        map.project_module(:dashboards) do |map|
-          map.permission(:view_dashboards, { 'dashboards/dashboards': ['show'] })
+      OpenProject::AccessControl.map do |ac_map|
+        ac_map.project_module(:dashboards) do |pm_map|
+          pm_map.permission(:view_dashboards, 'dashboards/dashboards': ['show'])
+          pm_map.permission(:manage_dashboards, 'dashboards/dashboards': ['show'])
         end
       end
+    end
+
+    config.to_prepare do
+      Dashboards::GridRegistration.register!
     end
   end
 end
