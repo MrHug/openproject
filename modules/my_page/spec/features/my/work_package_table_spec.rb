@@ -77,7 +77,7 @@ describe 'Arbitrary WorkPackage query table widget on my page', type: :feature, 
     it 'can add the widget and see the work packages of the filtered for types' do
       my_page.add_column(3, before_or_after: :before)
 
-      my_page.add_widget(2, 3, "Work packages")
+      my_page.add_widget(2, 3, "Work packages table")
 
       sleep(1)
 
@@ -162,7 +162,7 @@ describe 'Arbitrary WorkPackage query table widget on my page', type: :feature, 
     it 'cannot add the widget' do
       my_page.add_column(3, before_or_after: :before)
 
-      my_page.expect_unable_to_add_widget(2, 3, "Work packages")
+      my_page.expect_unable_to_add_widget(2, 3, "Work packages table")
     end
   end
 end

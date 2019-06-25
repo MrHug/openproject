@@ -5,6 +5,7 @@ import {
   WorkPackageEmbeddedGraphDataset
 } from "core-components/wp-table/embedded/wp-embedded-graph.component";
 import {I18nService} from "core-app/modules/common/i18n/i18n.service";
+import {ChartOptions} from 'chart.js';
 
 @Component({
   selector: 'wp-by-version-graph',
@@ -20,6 +21,7 @@ export class WorkPackageByVersionGraphComponent implements OnInit {
   public datasets:WorkPackageEmbeddedGraphDataset[] = [];
   public displayModeSingle = true;
   public availableGroupBy:{label:string, key:string}[];
+  public chartOptions:ChartOptions = { maintainAspectRatio: true };
 
   constructor(readonly elementRef:ElementRef,
               readonly I18n:I18nService) {

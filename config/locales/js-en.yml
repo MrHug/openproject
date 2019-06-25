@@ -205,7 +205,9 @@ en:
         work_packages_watched:
           title: 'Work packages watched by me'
         work_packages_table:
-          title: 'Work packages'
+          title: 'Work packages table'
+        work_packages_graph:
+          title: 'Work packages graph'
         work_packages_calendar:
           title: 'Calendar'
 

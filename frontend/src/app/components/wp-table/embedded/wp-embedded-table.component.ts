@@ -67,7 +67,7 @@ export class WorkPackageEmbeddedTableComponent extends WorkPackageEmbeddedBaseCo
     ).subscribe(([_, query]) => {
       this.loadingIndicator = this.QueryDm
         .loadResults(query, this.wpTablePagination.paginationObject)
-        .then((query) => this.initializeStates(query, query.results));
+        .then((query) => this.initializeStates(query));
     });
   }
 
@@ -83,7 +83,7 @@ export class WorkPackageEmbeddedTableComponent extends WorkPackageEmbeddedBaseCo
       });
   }
 
-  private initializeStates(query:QueryResource, results:WorkPackageCollectionResource) {
+  private initializeStates(query:QueryResource) {
 
     // If the configuration requests filters, we need to load the query form as well.
     if (this.configuration.withFilters) {
@@ -91,15 +91,15 @@ export class WorkPackageEmbeddedTableComponent extends WorkPackageEmbeddedBaseCo
     }
 
     this.wpStatesInitialization.clearStates();
-    this.wpStatesInitialization.initializeFromQuery(query, results);
-    this.wpStatesInitialization.updateQuerySpace(query, results);
+    this.wpStatesInitialization.initializeFromQuery(query, query.results);
+    this.wpStatesInitialization.updateQuerySpace(query, query.results);
 
     return this.querySpace
       .initialized
       .values$()
       .pipe(take(1))
       .subscribe(() => {
-        this.showTablePagination = results.total > results.count;
+        this.showTablePagination = query.results.total > query.results.count;
         this.setLoaded();
 
         // Disable compact mode when timeline active
@@ -130,7 +130,7 @@ export class WorkPackageEmbeddedTableComponent extends WorkPackageEmbeddedBaseCo
     if (this.loadedQuery) {
       const query = this.loadedQuery;
       this.loadedQuery = undefined;
-      this.initializeStates(query, query.results);
+      this.initializeStates(query);
       return Promise.resolve(this.loadedQuery!);
     }
 
@@ -156,7 +156,7 @@ export class WorkPackageEmbeddedTableComponent extends WorkPackageEmbeddedBaseCo
         this.queryProjectScope
       )
       .then((query:QueryResource) => {
-        this.initializeStates(query, query.results);
+        this.initializeStates(query);
         this.onQueryLoaded.emit(query);
         return query;
       })

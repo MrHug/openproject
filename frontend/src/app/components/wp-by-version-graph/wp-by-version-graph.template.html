@@ -6,6 +6,7 @@
 <div class="wp-by-version-graph--container" wp-isolated-query-space>
   <wp-embedded-graph #wpEmbeddedGraphMulti
                    [datasets]="datasets"
+                   [chartOptions]="chartOptions"
                    [initialLoadingIndicator]="false"
                    *ngIf="displayMulti">
   </wp-embedded-graph>
@@ -13,6 +14,7 @@
   <wp-embedded-graph #wpEmbeddedGraphSingle
                    [datasets]="datasets"
                    [initialLoadingIndicator]="false"
+                   [chartOptions]="chartOptions"
                    *ngIf="displaySingle">
   </wp-embedded-graph>
 </div>

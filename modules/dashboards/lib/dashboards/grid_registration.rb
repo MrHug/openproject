@@ -3,9 +3,16 @@ module Dashboards
     grid_class 'Grids::Dashboard'
     to_scope :project_dashboards_path
 
-    widgets 'work_packages_table'
+    widgets 'work_packages_table',
+                     'work_packages_graph'
 
     widget_strategy 'work_packages_table' do
+      after_destroy -> { ::Query.find_by(id: options[:queryId])&.destroy }
+
+      allowed ->(user, project) { user.allowed_to?(:save_queries, project) }
+    end
+
+    widget_strategy 'work_packages_graph' do
       after_destroy -> { ::Query.find_by(id: options[:queryId])&.destroy }
 
       allowed ->(user, project) { user.allowed_to?(:save_queries, project) }

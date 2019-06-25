@@ -443,6 +443,7 @@ import {WorkPackagesTableConfigMenu} from "core-components/wp-table/config-menu/
     WorkPackageTablePaginationComponent,
     WorkPackageEmbeddedTableComponent,
     WorkPackageEmbeddedTableEntryComponent,
+    WorkPackageEmbeddedGraphComponent,
     WorkPackageCardViewComponent,
     WorkPackageFilterButtonComponent,
     WorkPackageFilterContainerComponent,

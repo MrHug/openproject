@@ -54,6 +54,7 @@ import {WidgetWpTableComponent} from "core-app/modules/grids/widgets/wp-table/wp
 import {WidgetMenuComponent} from "core-app/modules/grids/widgets/menu/widget-menu.component";
 import {WidgetWpTableMenuComponent} from "core-app/modules/grids/widgets/wp-table/wp-table-menu.component";
 import {GridInitializationService} from "core-app/modules/grids/grid/initialization.service";
+import {WidgetWpGraphComponent} from "core-app/modules/grids/widgets/wp-graph/wp-graph.component";
 
 export const GRID_ROUTES:Ng2StateDeclaration[] = [
   {
@@ -85,6 +86,7 @@ export const GRID_ROUTES:Ng2StateDeclaration[] = [
                                   WidgetWpCreatedComponent,
                                   WidgetWpWatchedComponent,
                                   WidgetWpTableComponent,
+                                  WidgetWpGraphComponent,
                                   WidgetWpCalendarComponent,
                                   WidgetTimeEntriesCurrentUserComponent]),
 
@@ -111,6 +113,7 @@ export const GRID_ROUTES:Ng2StateDeclaration[] = [
     WidgetWpWatchedComponent,
     WidgetWpCalendarComponent,
     WidgetWpTableComponent,
+    WidgetWpGraphComponent,
     WidgetTimeEntriesCurrentUserComponent,
 
     WidgetMenuComponent,
@@ -161,6 +164,10 @@ export function registerWidgets(injector:Injector) {
         {
           identifier: 'work_packages_table',
           component: WidgetWpTableComponent
+        },
+        {
+          identifier: 'work_packages_graph',
+          component: WidgetWpGraphComponent
         },
         {
           identifier: 'work_packages_calendar',
