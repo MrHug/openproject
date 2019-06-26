@@ -5,7 +5,6 @@ import {OpTableActionFactory} from 'core-components/wp-table/table-actions/table
 import {OpTableActionsService} from 'core-components/wp-table/table-actions/table-actions.service';
 import {QueryResource} from 'core-app/modules/hal/resources/query-resource';
 import {QueryDmService} from 'core-app/modules/hal/dm-services/query-dm.service';
-import {WorkPackageCollectionResource} from 'core-app/modules/hal/resources/wp-collection-resource';
 import {WpTableConfigurationModalComponent} from 'core-components/wp-table/configuration-modal/wp-table-configuration.modal';
 import {OpModalService} from 'core-components/op-modals/op-modal.service';
 import {WorkPackageEmbeddedBaseComponent} from "core-components/wp-table/embedded/wp-embedded-base.component";
@@ -83,18 +82,15 @@ export class WorkPackageEmbeddedTableComponent extends WorkPackageEmbeddedBaseCo
       });
   }
 
-  private initializeStates(query:QueryResource) {
-
+  protected initializeStates(query:QueryResource) {
     // If the configuration requests filters, we need to load the query form as well.
     if (this.configuration.withFilters) {
       this.loadForm(query);
     }
 
-    this.wpStatesInitialization.clearStates();
-    this.wpStatesInitialization.initializeFromQuery(query, query.results);
-    this.wpStatesInitialization.updateQuerySpace(query, query.results);
+    super.initializeStates(query);
 
-    return this.querySpace
+    this.querySpace
       .initialized
       .values$()
       .pipe(take(1))

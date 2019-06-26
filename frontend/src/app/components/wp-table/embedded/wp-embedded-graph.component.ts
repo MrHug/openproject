@@ -3,12 +3,11 @@ import {WorkPackageTableConfiguration} from 'core-components/wp-table/wp-table-c
 import {GroupObject} from 'core-app/modules/hal/resources/wp-collection-resource';
 import {Chart, ChartOptions} from 'chart.js';
 import {WorkPackageEmbeddedBaseComponent} from "core-components/wp-table/embedded/wp-embedded-base.component";
-import {QueryResource} from "core-app/modules/hal/resources/query-resource";
 
 export interface WorkPackageEmbeddedGraphDataset {
   label:string;
   queryProps:any;
-  queryId?:number;
+  queryId?:number|string;
   groups?:GroupObject[];
 }
 
@@ -69,25 +68,31 @@ export class WorkPackageEmbeddedGraphComponent extends WorkPackageEmbeddedBaseCo
     // keep the array in order to update the labels
     this.chartLabels.length = 0;
     this.chartLabels.push(...uniqLabels);
-    this.chartData = labelCountMaps;
+    this.chartData.length = 0;
+    this.chartData.push(...labelCountMaps);
   }
 
   public loadQuery(visible:boolean = false) {
     this.error = null;
 
-    let queries = this.datasets.map((dataset:any) => {
-      return this.QueryDm
-                 .find(
-                   dataset.queryProps,
-                   dataset.queryId,
-                   this.queryProjectScope
-                 )
-                 .then(query => {
-                   dataset.groups = query.results.groups;
-                   this.initializeStates(query);
-                   return dataset;
-                 })
-        ;
+    let queries = this.datasets.map((dataset:WorkPackageEmbeddedGraphDataset) => {
+      if (dataset.groups) {
+        return Promise.resolve(dataset);
+      } else {
+        let queryId = dataset.queryId ? dataset.queryId.toString() : undefined;
+
+        return this.QueryDm
+          .find(
+            dataset.queryProps,
+            queryId,
+            this.queryProjectScope
+          )
+          .then(query => {
+            dataset.groups = query.results.groups;
+            //this.initializeStates(query);
+            return dataset;
+          });
+      }
     });
 
     const promise = Promise.all(queries)
@@ -111,17 +116,7 @@ export class WorkPackageEmbeddedGraphComponent extends WorkPackageEmbeddedBaseCo
     return promise;
   }
 
-  private initializeStates(query:QueryResource) {
-    this.querySpace.ready.doAndTransition('Query loaded', () => {
-      this.wpStatesInitialization.clearStates();
-      this.wpStatesInitialization.initializeFromQuery(query, query.results);
-      this.wpStatesInitialization.updateQuerySpace(query, query.results);
-
-      return Promise.resolve();
-    });
-  }
-
-  private setChartOptions() {
+  protected setChartOptions() {
     let defaults = {
       responsive: true,
       maintainAspectRatio: false,

@@ -1,80 +1,65 @@
-import {AfterViewInit, Component, OnDestroy, OnInit, ViewChild} from "@angular/core";
-import {WidgetWpListComponent} from "core-app/modules/grids/widgets/wp-widget/wp-widget.component";
-import {WorkPackageTableConfiguration} from "core-components/wp-table/wp-table-configuration";
-import {QueryResource} from "core-app/modules/hal/resources/query-resource";
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {WorkPackageEmbeddedGraphDataset} from "core-components/wp-table/embedded/wp-embedded-graph.component";
 import {I18nService} from "core-app/modules/common/i18n/i18n.service";
-import {untilComponentDestroyed} from 'ng2-rx-componentdestroyed';
-import {WorkPackageIsolatedQuerySpaceDirective} from "core-app/modules/work_packages/query-space/wp-isolated-query-space.directive";
-import {skip, take} from 'rxjs/operators';
 import {UrlParamsHelperService} from "core-components/wp-query/url-params-helper";
-import {QueryFormDmService} from "core-app/modules/hal/dm-services/query-form-dm.service";
 import {QueryDmService} from "core-app/modules/hal/dm-services/query-dm.service";
-import {QueryFormResource} from "core-app/modules/hal/resources/query-form-resource";
-import {Observable} from "rxjs";
 import {StateService} from '@uirouter/core';
+import {QueryFormDmService} from "core-app/modules/hal/dm-services/query-form-dm.service";
+import {WorkPackageStatesInitializationService} from "core-components/wp-list/wp-states-initialization.service";
+import {QueryFormResource} from "core-app/modules/hal/resources/query-form-resource";
+import {QueryResource} from "core-app/modules/hal/resources/query-resource";
+import {Observable} from 'rxjs';
+import {IsolatedQuerySpace} from "core-app/modules/work_packages/query-space/isolated-query-space";
+import {AbstractWidgetComponent} from "core-app/modules/grids/widgets/abstract-widget.component";
+import {skip, distinctUntilChanged} from 'rxjs/operators';
+import {untilComponentDestroyed} from 'ng2-rx-componentdestroyed';
+import {CollectionResource} from "core-app/modules/hal/resources/collection-resource";
+import {WorkPackageResource} from "core-app/modules/hal/resources/work-package-resource";
 
 @Component({
+  selector: 'widget-wp-graph',
   templateUrl: './wp-graph.component.html',
-  styleUrls: ['../wp-widget/wp-widget.component.css',
+  styleUrls: ['../wp-list/wp-list.component.css',
               './wp-graph.component.sass'],
 })
-export class WidgetWpGraphComponent extends WidgetWpListComponent implements OnInit, OnDestroy, AfterViewInit {
+export class WidgetWpGraphComponent extends AbstractWidgetComponent implements OnInit, OnDestroy {
   public text = { title: this.i18n.t('js.grid.widgets.work_packages_graph.title') };
-  public queryId:string|null;
-  private queryForm:QueryFormResource;
+  public datasets:WorkPackageEmbeddedGraphDataset[] = [];
+  private queryForm:QueryFormResource|undefined;
   public inFlight = false;
   public query$:Observable<QueryResource>;
 
-  public configuration:Partial<WorkPackageTableConfiguration> = {
-    actionsColumnEnabled: false,
-    columnMenuEnabled: true,
-    hierarchyToggleEnabled: true,
-    contextMenuEnabled: false
-  };
-
   constructor(protected i18n:I18nService,
               protected urlParamsHelper:UrlParamsHelperService,
-              private readonly state:StateService,
-              private readonly queryDm:QueryDmService,
-              private readonly queryFormDm:QueryFormDmService) {
+              protected readonly state:StateService,
+              protected readonly queryDm:QueryDmService,
+              protected readonly queryFormDm:QueryFormDmService,
+              protected readonly querySpace:IsolatedQuerySpace,
+              protected readonly wpStatesInitialization:WorkPackageStatesInitializationService) {
     super(i18n);
   }
 
-  @ViewChild(WorkPackageIsolatedQuerySpaceDirective, { static: true }) public querySpaceDirective:WorkPackageIsolatedQuerySpaceDirective;
-
   ngOnInit() {
-    if (!this.resource.options.queryId) {
-      this.createInitial()
-        .then((query) => {
-          this.resource.options = { queryId: query.id };
+    this.ensureQueryAndLoad();
 
-          this.resourceChanged.emit(this.resource);
-
-          this.queryId = query.id;
-
-          super.ngOnInit();
-        });
-    } else {
-      this.queryId = this.resource.options.queryId as string;
-
-      super.ngOnInit();
-    }
+    this.setupListeners();
   }
 
-  ngAfterViewInit() {
+  private setupListeners() {
     this.query$ = this
-      .querySpaceDirective
       .querySpace
       .query
       .values$();
 
     this.query$
       .pipe(
-        // 2 because ... well it is a magic number and works
-        skip(2),
+        // 3 because ... well it is a magic number and works
+        skip(3),
+        distinctUntilChanged(),
         untilComponentDestroyed(this)
       ).subscribe((query) => {
       this.ensureFormAndSaveQuery(query);
+      this.updateDatasets(query.results);
     });
   }
 
@@ -83,6 +68,8 @@ export class WidgetWpGraphComponent extends WidgetWpListComponent implements OnI
   }
 
   private ensureFormAndSaveQuery(query:QueryResource) {
+    this.queryForm = this.querySpace.queryForm.value;
+
     if (this.queryForm) {
       this.saveQuery(query);
     } else {
@@ -104,13 +91,27 @@ export class WidgetWpGraphComponent extends WidgetWpListComponent implements OnI
 
     this
       .queryDm
-      .update(query, this.queryForm)
+      .update(query, this.queryForm!)
       .toPromise()
       .then((query) => {
         this.inFlight = false;
-        return query;
       })
       .catch(() => this.inFlight = false);
+  }
+
+  private ensureQueryAndLoad() {
+    if (!this.resource.options.queryId) {
+      this.createInitial()
+        .then((query) => {
+          this.resource.options = { queryId: query.id };
+
+          this.resourceChanged.emit(this.resource);
+
+          this.loadQuery(query.id as string);
+        });
+    } else {
+      this.loadQuery(this.resource.options.queryId as string);
+    }
   }
 
   private createInitial():Promise<QueryResource> {
@@ -121,7 +122,7 @@ export class WidgetWpGraphComponent extends WidgetWpListComponent implements OnI
         {pageSize: 0},
         undefined,
         projectIdentifier,
-        this.buildQueryRequest()
+        this.queryCreationParams()
       )
       .then(form => {
         const query = this.queryFormDm.buildQueryResource(form);
@@ -130,16 +131,34 @@ export class WidgetWpGraphComponent extends WidgetWpListComponent implements OnI
       });
   }
 
-  private buildQueryRequest() {
+  private loadQuery(queryId:string) {
+    this.queryDm
+      .find(
+        {pageSize: 0},
+        queryId
+      )
+      .then(query => {
+        this.wpStatesInitialization.initialize(query, query.results);
+
+        this.updateDatasets(query.results);
+      });
+  }
+
+  protected queryCreationParams() {
+    //return Object.assign({}, super.queryCreationParams(), {
     return {
       hidden: true,
-      showHierarchies: false,
       name: this.text.title,
+      showHierarchies: false,
       _links: {
         groupBy: {
           href: "/api/v3/queries/group_bys/status"
         }
       }
     };
+  }
+
+  protected updateDatasets(results:CollectionResource<WorkPackageResource>) {
+    this.datasets = [{ groups: results.groups, queryProps: '', label: '' }];
   }
 }

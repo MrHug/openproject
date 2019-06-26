@@ -1,0 +1,20 @@
+<div>
+  <form>
+    <div class="form--field -full-width">
+      <div class="form--field-container">
+        <label class="option-label">
+          <span [textContent]="text.label_group_by"></span>
+          <select (change)="updateGroup($event.target.value)"
+                  id="selected_grouping"
+                  name="selected_grouping"
+                  class="form--select form--inline-select">
+            <option *ngFor="let group of availableGroups"
+                    [textContent]="group.name"
+                    [selected]="currentGroup && currentGroup!.href === group.href"
+                    [value]="group.href"></option>
+          </select>
+        </label>
+      </div>
+    </div>
+  </form>
+</div>

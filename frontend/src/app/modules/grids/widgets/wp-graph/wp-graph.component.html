@@ -13,13 +13,11 @@
                           class="widget-box--header-title">
   </editable-toolbar-title>
 
-  <widget-menu
+  <widget-wp-graph-menu
       [resource]="resource">
-  </widget-menu>
+  </widget-wp-graph-menu>
 </h3>
 
-<ng-container wp-isolated-query-space>
-  <wp-embedded-graph [datasets]="[{ queryId: queryId, queryProps: '', label: '' }]"
-                     *ngIf="queryId">
-  </wp-embedded-graph>
-</ng-container>
+<wp-embedded-graph [datasets]="datasets"
+                   *ngIf="(query$ | async) as query">
+</wp-embedded-graph>

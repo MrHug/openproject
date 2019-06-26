@@ -1,10 +1,9 @@
-import {AbstractWidgetComponent} from "app/modules/grids/widgets/abstract-widget.component";
-import {OnInit} from "@angular/core";
 import {
   WorkPackageTableConfiguration,
 } from "core-components/wp-table/wp-table-configuration";
+import {WidgetWpSetComponent} from "core-app/modules/grids/widgets/wp-set/wp-set.component";
 
-export class WidgetWpListComponent extends AbstractWidgetComponent implements OnInit {
+export class WidgetWpListComponent extends WidgetWpSetComponent {
   // An heuristic based on paddings, margins, the widget header height and the pagination height
   private static widgetSpaceOutsideTable:number = 230;
   private static wpLineHeight:number = 40;
@@ -19,10 +18,12 @@ export class WidgetWpListComponent extends AbstractWidgetComponent implements On
   };
 
   ngOnInit() {
-    this.configuration.forcePerPageOption = this.calculatePerPageOption();
+    super.ngOnInit();
+
+    this.configuration.forcePerPageOption = this.perPageOption;
   }
 
-  private calculatePerPageOption():number|false {
+  private get perPageOption():number|false {
     if (this.resource) {
       let numberOfRows = this.resource.height;
       let availableHeight = numberOfRows * WidgetWpListComponent.gridAreaHeight +

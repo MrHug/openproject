@@ -5,7 +5,8 @@
                 [datasets]="chartData"
                 [labels]="chartLabels"
                 [chartType]="chartType"
-                [options]="chartOptions">
+                [options]="chartOptions"
+                *ngIf="chartData.length > 0">
         </canvas>
     </ng-container>
     <div class="notification-box -error" *ngIf="error">

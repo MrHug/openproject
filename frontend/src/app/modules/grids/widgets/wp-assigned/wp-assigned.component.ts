@@ -1,10 +1,10 @@
 import {Component, OnInit} from "@angular/core";
 import {ApiV3FilterBuilder} from "core-components/api/api-v3/api-v3-filter-builder";
-import {WidgetWpListComponent} from "core-app/modules/grids/widgets/wp-widget/wp-widget.component";
+import {WidgetWpListComponent} from "core-app/modules/grids/widgets/wp-list/wp-list.component";
 
 @Component({
-  templateUrl: '../wp-widget/wp-widget.component.html',
-  styleUrls: ['../wp-widget/wp-widget.component.css']
+  templateUrl: '../wp-list/wp-list.component.html',
+  styleUrls: ['../wp-list/wp-list.component.css']
 })
 
 export class WidgetWpAssignedComponent extends WidgetWpListComponent implements OnInit {
