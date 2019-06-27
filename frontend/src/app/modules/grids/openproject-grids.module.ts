@@ -57,6 +57,7 @@ import {GridInitializationService} from "core-app/modules/grids/grid/initializat
 import {WidgetWpGraphComponent} from "core-app/modules/grids/widgets/wp-graph/wp-graph.component";
 import {WidgetWpGraphMenuComponent} from "core-app/modules/grids/widgets/wp-graph/wp-graph-menu.component";
 import {WidgetWpGraphQuerySpaceComponent} from "core-app/modules/grids/widgets/wp-graph/wp-graph-qs.component";
+import {WidgetWpTableQuerySpaceComponent} from "core-app/modules/grids/widgets/wp-table/wp-table-qs.component";
 
 export const GRID_ROUTES:Ng2StateDeclaration[] = [
   {
@@ -87,8 +88,7 @@ export const GRID_ROUTES:Ng2StateDeclaration[] = [
                                   WidgetWpAccountableComponent,
                                   WidgetWpCreatedComponent,
                                   WidgetWpWatchedComponent,
-                                  WidgetWpTableComponent,
-                                  WidgetWpGraphComponent,
+                                  WidgetWpTableQuerySpaceComponent,
                                   WidgetWpGraphQuerySpaceComponent,
                                   WidgetWpCalendarComponent,
                                   WidgetTimeEntriesCurrentUserComponent]),
@@ -116,13 +116,14 @@ export const GRID_ROUTES:Ng2StateDeclaration[] = [
     WidgetWpWatchedComponent,
     WidgetWpCalendarComponent,
     WidgetWpTableComponent,
+    WidgetWpTableQuerySpaceComponent,
     WidgetWpGraphComponent,
+    WidgetWpGraphQuerySpaceComponent,
     WidgetTimeEntriesCurrentUserComponent,
 
     WidgetMenuComponent,
     WidgetWpTableMenuComponent,
     WidgetWpGraphMenuComponent,
-    WidgetWpGraphQuerySpaceComponent,
 
     AddGridWidgetModal,
 
@@ -168,7 +169,7 @@ export function registerWidgets(injector:Injector) {
         },
         {
           identifier: 'work_packages_table',
-          component: WidgetWpTableComponent
+          component: WidgetWpTableQuerySpaceComponent
         },
         {
           identifier: 'work_packages_graph',

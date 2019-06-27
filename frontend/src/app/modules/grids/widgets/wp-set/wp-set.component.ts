@@ -1,8 +1,7 @@
-import {AfterViewInit, OnDestroy, OnInit, ViewChild} from "@angular/core";
+import {OnDestroy, OnInit} from "@angular/core";
 import {QueryResource} from "core-app/modules/hal/resources/query-resource";
 import {I18nService} from "core-app/modules/common/i18n/i18n.service";
 import {untilComponentDestroyed} from 'ng2-rx-componentdestroyed';
-import {WorkPackageIsolatedQuerySpaceDirective} from "core-app/modules/work_packages/query-space/wp-isolated-query-space.directive";
 import {skip} from 'rxjs/operators';
 import {UrlParamsHelperService} from "core-components/wp-query/url-params-helper";
 import {QueryFormDmService} from "core-app/modules/hal/dm-services/query-form-dm.service";
@@ -11,8 +10,9 @@ import {QueryFormResource} from "core-app/modules/hal/resources/query-form-resou
 import {Observable} from "rxjs";
 import {StateService} from '@uirouter/core';
 import {AbstractWidgetComponent} from "core-app/modules/grids/widgets/abstract-widget.component";
+import {IsolatedQuerySpace} from "core-app/modules/work_packages/query-space/isolated-query-space";
 
-export abstract class WidgetWpSetComponent extends AbstractWidgetComponent implements OnInit, OnDestroy, AfterViewInit {
+export abstract class WidgetWpSetComponent extends AbstractWidgetComponent implements OnInit, OnDestroy {
   public text = { title: this.i18n.t('js.grid.widgets.work_packages_graph.title') };
   public queryId:string|null;
   private queryForm:QueryFormResource;
@@ -23,11 +23,10 @@ export abstract class WidgetWpSetComponent extends AbstractWidgetComponent imple
               protected urlParamsHelper:UrlParamsHelperService,
               protected readonly state:StateService,
               protected readonly queryDm:QueryDmService,
+              protected readonly querySpace:IsolatedQuerySpace,
               protected readonly queryFormDm:QueryFormDmService) {
     super(i18n);
   }
-
-  @ViewChild(WorkPackageIsolatedQuerySpaceDirective, { static: true }) public querySpaceDirective:WorkPackageIsolatedQuerySpaceDirective;
 
   ngOnInit() {
     if (!this.resource.options.queryId) {
@@ -42,11 +41,8 @@ export abstract class WidgetWpSetComponent extends AbstractWidgetComponent imple
     } else {
       this.queryId = this.resource.options.queryId as string;
     }
-  }
 
-  ngAfterViewInit() {
     this.query$ = this
-      .querySpaceDirective
       .querySpace
       .query
       .values$();

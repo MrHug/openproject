@@ -10,7 +10,7 @@ import {OpModalService} from 'core-components/op-modals/op-modal.service';
 import {WorkPackageEmbeddedBaseComponent} from "core-components/wp-table/embedded/wp-embedded-base.component";
 import {QueryFormResource} from "core-app/modules/hal/resources/query-form-resource";
 import {QueryFormDmService} from "core-app/modules/hal/dm-services/query-form-dm.service";
-import {distinctUntilChanged, take, withLatestFrom} from "rxjs/operators";
+import {distinctUntilChanged, take, withLatestFrom, map} from "rxjs/operators";
 import {untilComponentDestroyed} from "ng2-rx-componentdestroyed";
 
 @Component({
@@ -60,9 +60,10 @@ export class WorkPackageEmbeddedTableComponent extends WorkPackageEmbeddedBaseCo
     this.wpTablePagination
       .updates$()
       .pipe(
-      distinctUntilChanged(),
-      untilComponentDestroyed(this),
-      withLatestFrom(this.querySpace.query.values$())
+        map(pagination => [pagination.page, pagination.perPage]),
+        distinctUntilChanged(),
+        untilComponentDestroyed(this),
+        withLatestFrom(this.querySpace.query.values$())
     ).subscribe(([_, query]) => {
       this.loadingIndicator = this.QueryDm
         .loadResults(query, this.wpTablePagination.paginationObject)
