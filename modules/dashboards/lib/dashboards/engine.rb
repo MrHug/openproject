@@ -19,7 +19,8 @@ module Dashboards
                   before: :calendar,
                   param: :project_id,
                   engine: :project_dashboards,
-                  icon: 'icon2')
+                  icon: 'icon2 icon-status',
+                  badge: 'dashboards.menu_badge')
       end
     end
 
