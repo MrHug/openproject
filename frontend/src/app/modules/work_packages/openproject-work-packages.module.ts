@@ -158,6 +158,7 @@ import {OpenprojectBcfModule} from "core-app/modules/bcf/openproject-bcf.module"
 import {WorkPackageRelationsAutocomplete} from "core-components/wp-relations/wp-relations-create/wp-relations-autocomplete/wp-relations-autocomplete.component";
 import {WorkPackagesTableConfigMenu} from "core-components/wp-table/config-menu/config-menu.component";
 import {WpTableConfigurationGraphSettingsTab} from "core-components/wp-table/configuration-modal/tabs/graph-settings-tab.component";
+import {WorkPackageIsolatedGraphQuerySpaceDirective} from "core-app/modules/work_packages/query-space/wp-isolated-graph-query-space.directive";
 
 @NgModule({
   imports: [
@@ -217,6 +218,7 @@ import {WpTableConfigurationGraphSettingsTab} from "core-components/wp-table/con
 
     // Query injector isolation
     WorkPackageIsolatedQuerySpaceDirective,
+    WorkPackageIsolatedGraphQuerySpaceDirective,
 
     // WP New
     WorkPackageNewFullViewComponent,
@@ -451,6 +453,7 @@ import {WpTableConfigurationGraphSettingsTab} from "core-components/wp-table/con
     WorkPackageFilterButtonComponent,
     WorkPackageFilterContainerComponent,
     WorkPackageIsolatedQuerySpaceDirective,
+    WorkPackageIsolatedGraphQuerySpaceDirective,
 
     // Modals
     WpTableConfigurationModalComponent,

@@ -1,7 +1,7 @@
 import {AfterViewInit, Component, Injector, Input, OnDestroy, OnInit, SimpleChanges} from '@angular/core';
 import {WorkPackageTableConfiguration} from 'core-components/wp-table/wp-table-configuration';
 import {GroupObject} from 'core-app/modules/hal/resources/wp-collection-resource';
-import {Chart, ChartOptions} from 'chart.js';
+import {Chart, ChartOptions, ChartType} from 'chart.js';
 import {WorkPackageEmbeddedBaseComponent} from "core-components/wp-table/embedded/wp-embedded-base.component";
 
 export interface WorkPackageEmbeddedGraphDataset {
@@ -19,6 +19,7 @@ export interface WorkPackageEmbeddedGraphDataset {
 export class WorkPackageEmbeddedGraphComponent extends WorkPackageEmbeddedBaseComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() public datasets:WorkPackageEmbeddedGraphDataset[];
   @Input('chartOptions') public inputChartOptions:ChartOptions;
+  @Input('chartType') chartType:ChartType = 'horizontalBar';
 
   public showTablePagination = false;
   public configuration:WorkPackageTableConfiguration;
@@ -26,7 +27,6 @@ export class WorkPackageEmbeddedGraphComponent extends WorkPackageEmbeddedBaseCo
 
   public chartLabels:string[] = [];
   public chartData:any = [];
-  public chartType:string = 'horizontalBar';
   public chartOptions:ChartOptions;
 
   constructor(injector:Injector) {
@@ -34,8 +34,12 @@ export class WorkPackageEmbeddedGraphComponent extends WorkPackageEmbeddedBaseCo
   }
 
   ngOnChanges(changes:SimpleChanges) {
-    if (this.initialized && (changes.datasets)) {
+    if (!this.initialized) { return; }
+
+    if (changes.datasets) {
       this.loadQuery(false);
+    } else if (changes.chartType) {
+      this.setChartOptions();
     }
   }
 
@@ -120,29 +124,37 @@ export class WorkPackageEmbeddedGraphComponent extends WorkPackageEmbeddedBaseCo
     let defaults = {
       responsive: true,
       maintainAspectRatio: false,
-      scales: {
-        xAxes: [{
-          stacked: true,
-          ticks: {
-            callback: (value:number) => {
-              if (Math.floor(value) === value) {
-                return value;
-              } else {
-                return null;
-              }
-            }
-          }
-        }],
-        yAxes: [{
-          stacked: true
-        }]
-      },
       legend: {
         // Only display legends if more than one dataset is provided.
         display: this.datasets.length > 1
       }
     };
 
-   this.chartOptions = Object.assign({}, defaults, this.inputChartOptions);
+    let chartTypeDefaults:ChartOptions = {};
+
+    if (this.chartType === 'horizontalBar') {
+      chartTypeDefaults = {
+        scales: {
+          xAxes: [{
+            stacked: true,
+            ticks: {
+              callback: (value:number) => {
+                if (Math.floor(value) === value) {
+                  return value;
+                } else {
+                  return 0;
+                }
+              }
+            }
+          }],
+            yAxes:
+          [{
+            stacked: true
+          }]
+        }
+      };
+    }
+
+    this.chartOptions = Object.assign({}, defaults, this.chartType, this.inputChartOptions);
   }
 }

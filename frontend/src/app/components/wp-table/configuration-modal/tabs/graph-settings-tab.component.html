@@ -1,19 +1,33 @@
 <div>
-  <form>
-    <div class="form--field -full-width">
+  <form class="form">
+    <div class="form--field">
+      <label class="form--label" [textContent]="text.group_by" for="selected_grouping"></label>
       <div class="form--field-container">
-        <label class="option-label">
-          <span [textContent]="text.label_group_by"></span>
+        <div class="form--select-container">
           <select (change)="updateGroup($event.target.value)"
                   id="selected_grouping"
-                  name="selected_grouping"
                   class="form--select form--inline-select">
             <option *ngFor="let group of availableGroups"
                     [textContent]="group.name"
                     [selected]="currentGroup && currentGroup!.href === group.href"
                     [value]="group.href"></option>
           </select>
-        </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="form--field">
+      <label class="form--label" [textContent]="text.chart_type" for="selected_chart_type"></label>
+      <div class="form--field-container">
+        <div class="form--select-container">
+          <select [(ngModel)]="currentChartType"
+                  [ngModelOptions]="{standalone: true}"
+                  id="selected_chart_type">
+            <option *ngFor="let type of availableChartTypes"
+                    [ngValue]="type"
+                    [textContent]="type.label"></option>
+          </select>
+        </div>
       </div>
     </div>
   </form>

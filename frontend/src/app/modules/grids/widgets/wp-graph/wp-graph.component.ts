@@ -9,12 +9,14 @@ import {WorkPackageStatesInitializationService} from "core-components/wp-list/wp
 import {QueryFormResource} from "core-app/modules/hal/resources/query-form-resource";
 import {QueryResource} from "core-app/modules/hal/resources/query-resource";
 import {Observable} from 'rxjs';
-import {IsolatedQuerySpace} from "core-app/modules/work_packages/query-space/isolated-query-space";
 import {AbstractWidgetComponent} from "core-app/modules/grids/widgets/abstract-widget.component";
 import {skip, distinctUntilChanged} from 'rxjs/operators';
 import {untilComponentDestroyed} from 'ng2-rx-componentdestroyed';
 import {CollectionResource} from "core-app/modules/hal/resources/collection-resource";
 import {WorkPackageResource} from "core-app/modules/hal/resources/work-package-resource";
+import {IsolatedGraphQuerySpace} from "core-app/modules/work_packages/query-space/isolated-graph-query-space";
+import {ChartType} from 'chart.js';
+import {IsolatedQuerySpace} from "core-app/modules/work_packages/query-space/isolated-query-space";
 
 @Component({
   selector: 'widget-wp-graph',
@@ -25,6 +27,7 @@ import {WorkPackageResource} from "core-app/modules/hal/resources/work-package-r
 export class WidgetWpGraphComponent extends AbstractWidgetComponent implements OnInit, OnDestroy {
   public text = { title: this.i18n.t('js.grid.widgets.work_packages_graph.title') };
   public datasets:WorkPackageEmbeddedGraphDataset[] = [];
+  public chartType:ChartType;
   private queryForm:QueryFormResource|undefined;
   public inFlight = false;
   public query$:Observable<QueryResource>;
@@ -41,6 +44,7 @@ export class WidgetWpGraphComponent extends AbstractWidgetComponent implements O
 
   ngOnInit() {
     this.ensureQueryAndLoad();
+    this.setChartType();
 
     this.setupListeners();
   }
@@ -61,6 +65,16 @@ export class WidgetWpGraphComponent extends AbstractWidgetComponent implements O
       this.ensureFormAndSaveQuery(query);
       this.updateDatasets(query.results);
     });
+
+    this.chartTypeState
+      .values$()
+      .pipe(
+        distinctUntilChanged(),
+        untilComponentDestroyed(this)
+      ).subscribe(type => {
+        this.chartType = type;
+        this.saveChartTypeUpdate();
+      });
   }
 
   ngOnDestroy() {
@@ -97,6 +111,12 @@ export class WidgetWpGraphComponent extends AbstractWidgetComponent implements O
         this.inFlight = false;
       })
       .catch(() => this.inFlight = false);
+  }
+
+  private setChartType() {
+    this.chartType = (this.resource.options.chartType as ChartType) || 'horizontalBar';
+
+    this.chartTypeState.putValue(this.chartType);
   }
 
   private ensureQueryAndLoad() {
@@ -145,7 +165,6 @@ export class WidgetWpGraphComponent extends AbstractWidgetComponent implements O
   }
 
   protected queryCreationParams() {
-    //return Object.assign({}, super.queryCreationParams(), {
     return {
       hidden: true,
       name: this.text.title,
@@ -160,5 +179,16 @@ export class WidgetWpGraphComponent extends AbstractWidgetComponent implements O
 
   protected updateDatasets(results:CollectionResource<WorkPackageResource>) {
     this.datasets = [{ groups: results.groups, queryProps: '', label: '' }];
+  }
+
+  protected get chartTypeState() {
+    return (this.querySpace as unknown as IsolatedGraphQuerySpace).chartType;
+  }
+
+  protected saveChartTypeUpdate() {
+    if (this.resource.options.chartType !== this.chartType) {
+      this.resource.options.chartType = this.chartType;
+      this.resourceChanged.emit(this.resource);
+    }
   }
 }

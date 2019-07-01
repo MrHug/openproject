@@ -17,6 +17,7 @@ import {GridResizeService} from "core-app/modules/grids/grid/resize.service";
 import {GridAreaService} from "core-app/modules/grids/grid/area.service";
 import {GridAddWidgetService} from "core-app/modules/grids/grid/add-widget.service";
 import {GridRemoveWidgetService} from "core-app/modules/grids/grid/remove-widget.service";
+import {WidgetWpGraphQuerySpaceComponent} from "core-app/modules/grids/widgets/wp-graph/wp-graph-qs.component";
 
 export interface WidgetRegistration {
   identifier:string;
@@ -38,6 +39,8 @@ export interface WidgetRegistration {
 export class GridComponent implements OnDestroy, OnInit {
   public uiWidgets:ComponentRef<any>[] = [];
   public GRID_AREA_HEIGHT = 100;
+
+  public component = WidgetWpGraphQuerySpaceComponent;
 
   @Input() grid:GridResource;
 
@@ -74,9 +77,11 @@ export class GridComponent implements OnDestroy, OnInit {
     }
   }
 
-  public widgetComponentOutput(resource:GridWidgetResource) {
-    return { resourceChanged: this.layout.saveGrid.bind(this.layout) };
+  public widgetComponentInput(resource:GridWidgetResource) {
+    return { resource: resource };
   }
+
+  public widgetComponentOutput = { resourceChanged: this.layout.saveGrid.bind(this.layout) };
 
   public get gridColumnStyle() {
     return this.sanitization.bypassSecurityTrustStyle(`repeat(${this.layout.numColumns}, 1fr)`);

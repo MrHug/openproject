@@ -1,3 +1,4 @@
-<ng-container wp-isolated-query-space>
-  <widget-wp-graph [resource]="resource"></widget-wp-graph>
+<ng-container wp-isolated-graph-query-space>
+  <widget-wp-graph [resource]="resource"
+                   (resourceChanged)="onResourceChanged(resource)"> </widget-wp-graph>
 </ng-container>

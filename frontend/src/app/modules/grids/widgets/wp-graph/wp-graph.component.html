@@ -19,5 +19,6 @@
 </h3>
 
 <wp-embedded-graph [datasets]="datasets"
+                   [chartType]="chartType"
                    *ngIf="(query$ | async) as query">
 </wp-embedded-graph>

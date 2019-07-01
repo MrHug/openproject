@@ -61,10 +61,12 @@ import {debugLog} from "core-app/helpers/debug_output";
 import {PortalCleanupService} from "core-app/modules/fields/display/display-portal/portal-cleanup.service";
 import {TableDragActionsRegistryService} from "core-components/wp-table/drag-and-drop/actions/table-drag-actions-registry.service";
 import {ReorderQueryService} from "core-app/modules/common/drag-and-drop/reorder-query.service";
+import {IsolatedGraphQuerySpace} from "core-app/modules/work_packages/query-space/isolated-graph-query-space";
+import {WorkPackageIsolatedQuerySpaceDirective} from "core-app/modules/work_packages/query-space/wp-isolated-query-space.directive";
 
-export const WpIsolatedQuerySpaceProviders = [
+export const WpIsolatedGraphQuerySpaceProviders = [
   // Open the isolated space first, order is important here
-  IsolatedQuerySpace,
+  { provide: IsolatedQuerySpace, useClass: IsolatedGraphQuerySpace },
   OpTableActionsService,
 
   WorkPackageTableRefreshService,
@@ -109,6 +111,8 @@ export const WpIsolatedQuerySpaceProviders = [
   TableDragActionsRegistryService,
 ];
 
+
+
 /**
  * Directive to open a work package query 'space', an isolated injector hierarchy
  * that provides access to query-bound data and services, especially around the querySpace services.
@@ -117,14 +121,14 @@ export const WpIsolatedQuerySpaceProviders = [
  * in a module.
  */
 @Directive({
-  selector: '[wp-isolated-query-space]',
-  providers: WpIsolatedQuerySpaceProviders
+  selector: '[wp-isolated-graph-query-space]',
+  providers: WpIsolatedGraphQuerySpaceProviders
 })
-export class WorkPackageIsolatedQuerySpaceDirective {
+export class WorkPackageIsolatedGraphQuerySpaceDirective extends WorkPackageIsolatedQuerySpaceDirective {
 
-  constructor(private elementRef:ElementRef,
-              public querySpace:IsolatedQuerySpace,
-              private injector:Injector) {
-    debugLog("Opening isolated query space %O in %O", injector, elementRef.nativeElement);
-  }
+  //constructor(private elementRef:ElementRef,
+  //            public querySpace:IsolatedQuerySpace,
+  //            private injector:Injector) {
+  //  debugLog("Opening isolated query space %O in %O", injector, elementRef.nativeElement);
+  //}
 }
