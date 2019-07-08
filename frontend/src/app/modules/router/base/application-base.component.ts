@@ -26,13 +26,14 @@
 // See doc/COPYRIGHT.rdoc for more details.
 // ++
 
-import {Component} from "@angular/core";
+import {ChangeDetectionStrategy, Component} from "@angular/core";
 import {DynamicBootstrapper} from "core-app/globals/dynamic-bootstrapper";
 
 export const appBaseSelector = 'openproject-base';
 
 @Component({
   selector: appBaseSelector,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="openproject-base--ui-view">
       <ui-view></ui-view>

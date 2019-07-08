@@ -26,7 +26,7 @@
 // See doc/COPYRIGHT.rdoc for more details.
 // ++
 
-import {Component, OnDestroy} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnDestroy} from '@angular/core';
 import {INotification, NotificationsService} from 'core-app/modules/common/notifications/notifications.service';
 import {componentDestroyed} from 'ng2-rx-componentdestroyed';
 import {takeUntil} from 'rxjs/operators';
@@ -40,6 +40,7 @@ import {DynamicBootstrapper} from "core-app/globals/dynamic-bootstrapper";
     </div>
   </div>
   `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'notifications-container'
 })
 export class NotificationsContainerComponent implements OnDestroy {

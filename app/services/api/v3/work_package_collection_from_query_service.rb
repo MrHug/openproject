@@ -127,13 +127,29 @@ module API
           self_link(project),
           project: project,
           query: resulting_params,
-          page: to_i_or_nil(resulting_params[:offset]),
-          per_page: to_i_or_nil(resulting_params[:pageSize]),
+          page: current_page(resulting_params),
+          per_page: per_page(resulting_params),
           groups: groups,
           total_sums: sums,
           embed_schemas: true,
           current_user: current_user
         )
+      end
+
+      def current_page(resulting_params)
+        if query.manually_sorted?
+          1
+        else
+          to_i_or_nil(resulting_params[:offset])
+        end
+      end
+
+      def per_page(resulting_params)
+        if query.manually_sorted?
+          250 # TODO magical number
+        else
+          to_i_or_nil(resulting_params[:pageSize])
+        end
       end
 
       def to_i_or_nil(value)
